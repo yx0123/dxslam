@@ -130,9 +130,10 @@ cv::Mat System::TrackRGBD(const cv::Mat &im,
         mbReset = false;
     }
     }
-
+    std::cout <<"before grabimage" << "\n";
+    std::cout <<"after grabimage" << "\n";
     cv::Mat Tcw = mpTracker->GrabImageRGBD(im, depthmap, timestamp, keypoints, local_desc, global_desc);
-
+    std::cout <<"after grabimage" << "\n";
     std::unique_lock<std::mutex> lock2(mMutexState);
     mTrackingState = mpTracker->mState;
     mTrackedMapPoints = mpTracker->mCurrentFrame.mvpMapPoints;

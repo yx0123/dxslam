@@ -119,7 +119,6 @@ void Tracking::SetViewer(Viewer *pViewer)
     mpViewer=pViewer;
 }
 
-
 cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB,
                             const cv::Mat &imD,
                             const double &timestamp,
@@ -148,6 +147,10 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB,
     if((fabs(mDepthMapFactor-1.0f)>1e-5) || imDepth.type()!=CV_32F)
         imDepth.convertTo(imDepth,CV_32F,mDepthMapFactor);
 
+    std::cout <<"before Frame" << "\n";
+
+    std::cout <<"sizeof Frame before " << sizeof(mCurrentFrame) << "\n";
+
     mCurrentFrame = Frame(mImGray,
                         imDepth,
                         timestamp,
@@ -158,9 +161,14 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB,
                         keypoints,
                         local_desc,
                         global_desc);
-    Track();
 
+    std::cout <<"after Frame" << "\n";
+    std::cout <<"sizeof Frame" << sizeof(mCurrentFrame) << "\n";
+    std::cout <<"address of Frame" << &mCurrentFrame << "\n";
+    Track();
+    
     return mCurrentFrame.mTcw.clone();
+    std::cout <<"grabimagergbd" << "\n";
 }
 
 
@@ -1279,6 +1287,9 @@ bool Tracking::Relocalization()
             }
         }
     }
+
+    for ( auto pSolver : vpPnPsolvers )
+        delete pSolver;
 
     if(!bMatch)
     {

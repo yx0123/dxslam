@@ -24,6 +24,7 @@ Frame::Frame(const Frame &frame)
      mvpMapPoints(frame.mvpMapPoints), mvbOutlier(frame.mvbOutlier), mnId(frame.mnId),
      mpReferenceKF(frame.mpReferenceKF)
 {
+    
     // mBowVec = frame.mBowVec;
     for(int i=0;i<FRAME_GRID_COLS;i++)
         for(int j=0; j<FRAME_GRID_ROWS; j++)
@@ -59,9 +60,12 @@ Frame::Frame(const cv::Mat &imGray,
 
     UndistortKeyPoints();
 
+
     ComputeStereoFromRGBD(imDepth);
     mvpMapPoints = std::vector<MapPoint*>(N,static_cast<MapPoint*>(NULL));
     mvbOutlier = std::vector<bool>(N,false);
+
+    std::cout << "before initial computations" << "\n";
 
     // This is done only for the first Frame (or after a change in the calibration)
     if(mbInitialComputations)
@@ -80,10 +84,17 @@ Frame::Frame(const cv::Mat &imGray,
 
         mbInitialComputations=false;
     }
+    std::cout << "after initial computations" << "\n";
 
     mb = mbf/fx;
-
+    std::cout << "before assignfeatures" << "\n";
     AssignFeaturesToGrid();
+    std::cout << "after assignfeatures" << "\n";
+
+    std::cout <<"Size of keypoints: " << sizeof(keypoints) << "\n";
+    std::cout <<"mvpMapPoints: " << sizeof(mvpMapPoints) << "\n";
+    std::cout <<"local desc: " << sizeof(local_desc) << "\n";
+    std::cout <<"global desc: " << sizeof(local_desc) << "\n";
 }
 
 void Frame::AssignFeaturesToGrid()
@@ -101,12 +112,14 @@ void Frame::AssignFeaturesToGrid()
         if(PosInGrid(kp,nGridPosX,nGridPosY))
             mGrid[nGridPosX][nGridPosY].push_back(i);
     }
+    std::cout << "Assignfeatures done" << "\n";
 }
 
 void Frame::SetPose(cv::Mat Tcw)
 {
     mTcw = Tcw.clone();
     UpdatePoseMatrices();
+    std::cout << "setpose done" << "\n";
 }
 
 void Frame::UpdatePoseMatrices()
@@ -115,6 +128,7 @@ void Frame::UpdatePoseMatrices()
     mRwc = mRcw.t();
     mtcw = mTcw.rowRange(0,3).col(3);
     mOw = -mRcw.t()*mtcw;
+    std::cout << "updateposematrices done" << "\n";
 }
 
 bool Frame::isInFrustum(MapPoint *pMP, float viewingCosLimit)
@@ -170,6 +184,7 @@ bool Frame::isInFrustum(MapPoint *pMP, float viewingCosLimit)
     pMP->mTrackViewCos = viewCos;
 
     return true;
+    std::cout << "isInFrustum done" << "\n";
 }
 
 std::vector<size_t> Frame::GetFeaturesInArea(const float &x, const float  &y, const float  &r, const int minLevel, const int maxLevel) const
@@ -225,6 +240,8 @@ std::vector<size_t> Frame::GetFeaturesInArea(const float &x, const float  &y, co
     }
 
     return vIndices;
+    std::cout << "GetFeaturesInArea done" << "\n";
+
 }
 
 bool Frame::PosInGrid(const cv::KeyPoint &kp, int &posX, int &posY)
@@ -237,6 +254,7 @@ bool Frame::PosInGrid(const cv::KeyPoint &kp, int &posX, int &posY)
         return false;
 
     return true;
+    std::cout << "PostInGrid done" << "\n";
 }
 
 
@@ -246,6 +264,7 @@ void Frame::ComputeBoW()
     {
         mpORBvocabulary->transform(mDescriptors,4,mBowVec,mFeatVec);
     }
+    std::cout << "Compute bow done" << "\n";
 }
 
 void Frame::UndistortKeyPoints()
@@ -278,6 +297,7 @@ void Frame::UndistortKeyPoints()
         kp.pt.y=mat.at<float>(i,1);
         mvKeysUn[i]=kp;
     }
+    std::cout << "UndistortKeyPoints done" << "\n";
 }
 
 void Frame::ComputeImageBounds(const cv::Mat &imLeft)
@@ -308,6 +328,7 @@ void Frame::ComputeImageBounds(const cv::Mat &imLeft)
         mnMinY = 0.0f;
         mnMaxY = imLeft.rows;
     }
+    std::cout << "compute image bounds done" << "\n";
 }
 
 
@@ -332,6 +353,7 @@ void Frame::ComputeStereoFromRGBD(const cv::Mat &imDepth)
             mvuRight[i] = kpU.pt.x-mbf/d;
         }
     }
+    std::cout << "compute stereofrom rgbd" << "\n";
 }
 
 cv::Mat Frame::UnprojectStereo(const int &i)
@@ -348,6 +370,7 @@ cv::Mat Frame::UnprojectStereo(const int &i)
     }
     else
         return cv::Mat();
+    std::cout << "unproject stereo" << "\n";
 }
 
 } //namespace ORB_SLAM
