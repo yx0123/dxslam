@@ -149,8 +149,6 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB,
 
     std::cout <<"before Frame" << "\n";
 
-    std::cout <<"sizeof Frame before " << sizeof(mCurrentFrame) << "\n";
-
     mCurrentFrame = Frame(mImGray,
                         imDepth,
                         timestamp,
@@ -164,7 +162,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB,
 
     std::cout <<"after Frame" << "\n";
     std::cout <<"sizeof Frame" << sizeof(mCurrentFrame) << "\n";
-    std::cout <<"address of Frame" << &mCurrentFrame << "\n";
+
     Track();
     
     return mCurrentFrame.mTcw.clone();

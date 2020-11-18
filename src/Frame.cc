@@ -90,11 +90,6 @@ Frame::Frame(const cv::Mat &imGray,
     std::cout << "before assignfeatures" << "\n";
     AssignFeaturesToGrid();
     std::cout << "after assignfeatures" << "\n";
-
-    std::cout <<"Size of keypoints: " << sizeof(keypoints) << "\n";
-    std::cout <<"mvpMapPoints: " << sizeof(mvpMapPoints) << "\n";
-    std::cout <<"local desc: " << sizeof(local_desc) << "\n";
-    std::cout <<"global desc: " << sizeof(local_desc) << "\n";
 }
 
 void Frame::AssignFeaturesToGrid()
