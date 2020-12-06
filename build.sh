@@ -37,18 +37,24 @@ make -j
 
 cd ../../../
 
-echo "Download and Uncompress vocabulary ..."
+if [ ! -d "Vocabulary" ]; then
+    echo "Download and Uncompress vocabulary ..."
+    mkdir Vocabulary
+    cd Vocabulary
+    wget https://github.com/ivipsourcecode/dxslam/releases/download/1.0.0/DXSLAM.tar.xz
+    tar -xf *.tar.xz
+    cd ..
+fi
 
-mkdir Vocabulary
-cd Vocabulary
-wget https://github.com/ivipsourcecode/dxslam/releases/download/1.0.0/DXSLAM.tar.xz
-tar -xf *.tar.xz
-cd ..
+if [ -d "hf-net/model" ]; then
+    echo "hf-net model exits"
+else
+    cd hf-net
+    wget https://github.com/ivipsourcecode/dxslam/releases/download/1.0.0/model.tar.xz
+    tar -xf *.tar.xz
+    cd ..
+fi
 
-cd hf-net
-wget https://github.com/ivipsourcecode/dxslam/releases/download/1.0.0/model.tar.xz
-tar -xf *.tar.xz
-cd ..
 
 echo "Configuring and building DXSLAM ..."
 
